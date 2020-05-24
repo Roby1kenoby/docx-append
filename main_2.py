@@ -13,7 +13,7 @@ master = 0
 documents = []
 ui = []
 root = Tk()
-# root.geometry("290x400")
+root.geometry("290x400")
 # r = IntVar()
 
 if DEBUG_MODE:
@@ -21,15 +21,13 @@ if DEBUG_MODE:
     for letter in [chr(i) for i in range(ord('a'),ord('g')+1)]:
         files.append(os.path.join("debug",str(letter)+".docx"))
 else:
-    files = filedialog.askopenfilenames(initialdir="/", title="search for file",
-                                    filetypes=(("docx", "*.docx"), ("doc", "*.doc"), ("all", "*")))
+    files = filedialog.askopenfilenames(initialdir="/", title="search for file",filetypes=(("docx", "*.docx"), ("doc", "*.doc"), ("all", "*")))
 
 '''def master_selected(index):
     global master
     master = index
     # print_debug()
 '''
-
 
 def up_clicked(index):
     if index == 0:
@@ -79,9 +77,11 @@ def draw():
 
 def append():
     masterDoc = Document(documents[0]["path"])
+    masterDoc.add_page_break()
     composer = Composer(masterDoc)
     for doc in range(1, len(documents)):
         docu = Document(documents[doc]["path"])
+        docu.add_page_break()
         composer.append(docu)
         doc += 1
     composer.save("combined.docx")
@@ -97,7 +97,7 @@ for file in files:
 # init UI
 append_button = Button(root, text="Append", command=append)
 canvas = Canvas(root)
-sb = Scrollbar(root, orient="vertical", command=canvas.yview)
+sb = Scrollbar(canvas, orient="vertical", command=canvas.yview)
 frame = Frame(canvas)
 
 for i in range(len(documents)):
