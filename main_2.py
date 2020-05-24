@@ -2,7 +2,11 @@ from tkinter import *
 from docxcompose.composer import Composer
 from docx import Document
 from tkinter import filedialog
+import os
 import ntpath
+
+#debug
+DEBUG_MODE = True
 
 # globals
 master = 0
@@ -11,7 +15,13 @@ ui = []
 root = Tk()
 # root.geometry("290x400")
 # r = IntVar()
-files = filedialog.askopenfilenames(initialdir="/", title="search for file",
+
+if DEBUG_MODE:
+    files = []
+    for letter in [chr(i) for i in range(ord('a'),ord('g')+1)]:
+        files.append(os.path.join("debug",str(letter)+".docx"))
+else:
+    files = filedialog.askopenfilenames(initialdir="/", title="search for file",
                                     filetypes=(("docx", "*.docx"), ("doc", "*.doc"), ("all", "*")))
 
 '''def master_selected(index):
