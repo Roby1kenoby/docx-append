@@ -63,9 +63,8 @@ def draw():
         uiline["up"].grid(row=position, column=3)
         uiline["down"].grid(row=position, column=4)
     append_button.pack()
-    container.pack()
-    canvas.pack(side="left", fill="both", expand=TRUE)
-    sb.pack(side="right", fill="y")
+    canvas.pack(fill="both", expand=True, side="left")
+    sb.pack(fill="y", side="right")
 
 
 def append():
@@ -86,29 +85,21 @@ for file in files:
 
 
 # init UI
-containerPadre = Frame(root)
-canvas = Canvas(containerPadre)
-scrollable_frame = Frame(canvas)
-sb = Scrollbar(containerPadre, orient="vertical", command=canvas.yview)
-scrollable_frame.bind("configure", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-canvas.configure(yscrollcommand=sb.set)
-canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-
-# doc_frame = Listbox(root, yscrollcommand=sb.set)
 append_button = Button(root, text="Append", command=append)
+canvas = Canvas(root)
+sb = Scrollbar(root, orient="vertical", command=canvas.yview)
+frame = Frame(canvas)
 
 for i in range(len(documents)):
     ui.append({
-        "filename": Label(scrollable_frame, text=ntpath.basename(documents[i]["path"])),
-        # "ismaster": Radiobutton(root, variable=r, value=i, command=lambda: master_selected(r.get())),
-        "position": Label(scrollable_frame, text=str(i)),
-        "up": Button(scrollable_frame, text="up", command=lambda index=i: up_clicked(index)),
-        "down": Button(scrollable_frame, text="down", command=lambda index=i: down_clicked(index))
+        "filename": Label(frame, text=ntpath.basename(documents[i]["path"])),
+        "position": Label(frame, text=str(i)),
+        "up": Button(frame, text="up", command=lambda index=i: up_clicked(index)),
+        "down": Button(frame, text="down", command=lambda index=i: down_clicked(index))
     })
-
-
-#sb.config(command=doc_frame.yview())
-
+canvas.create_window(0, 0, anchor="nw", window=frame)
+canvas.update_idletasks()
+canvas.configure(scrollregion=canvas.bbox("all"), yscrollcommand=sb.set)
 
 
 draw()
