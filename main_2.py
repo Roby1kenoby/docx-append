@@ -86,7 +86,9 @@ def append():
         docu.add_page_break()
         composer.append(docu)
         doc += 1
+    print("Inizio composizione")
     composer.save(os.path.join(path, "combined.docx"))
+    print("Fine composizione")
     messagebox.showinfo("POTEITOES!", "Ho finito!")
 
 
