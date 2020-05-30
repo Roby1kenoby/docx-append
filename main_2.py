@@ -1,27 +1,32 @@
 from tkinter import *
+from tkinter import filedialog
+from tkinter import messagebox
 from docxcompose.composer import Composer
 from docx import Document
-from tkinter import filedialog
 import os
 import ntpath
 
 #debug
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # globals
 master = 0
 documents = []
 ui = []
+path = ""
 root = Tk()
-root.geometry("290x400")
+root.geometry("330x400")
 # r = IntVar()
 
 if DEBUG_MODE:
     files = []
-    for letter in [chr(i) for i in range(ord('a'),ord('g')+1)]:
-        files.append(os.path.join("debug",str(letter)+".docx"))
+    for letter in [chr(i) for i in range(ord('a'), ord('g')+1)]:
+        files.append(os.path.join("debug", str(letter)+".docx"))
 else:
-    files = filedialog.askopenfilenames(initialdir="/", title="search for file",filetypes=(("docx", "*.docx"), ("doc", "*.doc"), ("all", "*")))
+    files = filedialog.askopenfilenames(initialdir="/", title="search for file",
+                                        filetypes=(("docx", "*.docx"), ("doc", "*.doc"), ("all", "*")))
+    path = os.path.dirname(os.path.realpath(files[0]))
+
 
 '''def master_selected(index):
     global master
@@ -70,9 +75,6 @@ def draw():
         uiline["position"].grid(row=position, column=2, sticky=NSEW)
         uiline["up"].grid(row=position, column=3)
         uiline["down"].grid(row=position, column=4)
-    append_button.pack()
-    canvas.pack(fill="both", expand=True, side="left")
-    sb.pack(fill="y", side="right")
 
 
 def append():
@@ -84,7 +86,8 @@ def append():
         docu.add_page_break()
         composer.append(docu)
         doc += 1
-    composer.save("combined.docx")
+    composer.save(os.path.join(path, "combined.docx"))
+    messagebox.showinfo("POTEITOES!", "Ho finito!")
 
 
 # main
@@ -95,22 +98,30 @@ for file in files:
 
 
 # init UI
-append_button = Button(root, text="Append", command=append)
-canvas = Canvas(root)
-sb = Scrollbar(canvas, orient="vertical", command=canvas.yview)
-frame = Frame(canvas)
+
+main_frame = Frame(root, width=290, height=400)
+main_frame.place(x=10, y=10)
+
+append_button = Button(main_frame, text="Append", command=append)
+
+canvas = Canvas(main_frame)
+sb = Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+canvas.configure(yscrollcommand=sb.set)
+content_frame = Frame(canvas)
 
 for i in range(len(documents)):
     ui.append({
-        "filename": Label(frame, text=ntpath.basename(documents[i]["path"])),
-        "position": Label(frame, text=str(i)),
-        "up": Button(frame, text="up", command=lambda index=i: up_clicked(index)),
-        "down": Button(frame, text="down", command=lambda index=i: down_clicked(index))
+        "filename": Label(content_frame, text=ntpath.basename(documents[i]["path"])),
+        "position": Label(content_frame, text=str(i)),
+        "up": Button(content_frame, text="up", command=lambda index=i: up_clicked(index)),
+        "down": Button(content_frame, text="down", command=lambda index=i: down_clicked(index))
     })
-canvas.create_window(0, 0, anchor="nw", window=frame)
-canvas.update_idletasks()
-canvas.configure(scrollregion=canvas.bbox("all"), yscrollcommand=sb.set)
 
+canvas.grid(row=1, column=0, sticky='nsew')
+sb.grid(row=1, column=1, sticky='ns')
+append_button.grid(row=0, column=0, sticky='nesw', columnspan=2)
+canvas.create_window((0, 0), anchor="nw", window=content_frame)
+content_frame.bind("<Configure>", lambda a: canvas.configure(scrollregion=canvas.bbox("all"), width=290, height=400))
 
 draw()
 

@@ -1,7 +1,0 @@
-MVC Model View Controller
-
-- Definisci la tua struttura data (NO UI)
-- Definisci le op
-- Definisci la struttura dati UI
-- Incolla assieme
-- Definisci op sulla UI
