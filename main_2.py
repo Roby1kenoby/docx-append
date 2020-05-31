@@ -6,6 +6,7 @@ from docx import Document
 import os
 import ntpath
 
+
 #debug
 DEBUG_MODE = False
 
@@ -62,9 +63,9 @@ def print_debug():
 
 def updateui():
     for i in range(len(documents)):
-        doc = documents[i]
+        name = ntpath.basename(documents[i]["path"])
         uiline = ui[i]
-        uiline["filename"]["text"] = ntpath.basename(doc["path"])
+        uiline["filename"]["text"] = name[:40] if len(name) > 40 else name
         uiline["position"]["text"] = str(i)
 
 
@@ -86,9 +87,7 @@ def append():
         docu.add_page_break()
         composer.append(docu)
         doc += 1
-    print("Inizio composizione")
     composer.save(os.path.join(path, "combined.docx"))
-    print("Fine composizione")
     messagebox.showinfo("POTEITOES!", "Ho finito!")
 
 
@@ -112,8 +111,9 @@ canvas.configure(yscrollcommand=sb.set)
 content_frame = Frame(canvas)
 
 for i in range(len(documents)):
+    name = ntpath.basename(documents[i]["path"])
     ui.append({
-        "filename": Label(content_frame, text=ntpath.basename(documents[i]["path"])),
+        "filename": Label(content_frame, text=(name[:40] if len(name) > 40 else name)),
         "position": Label(content_frame, text=str(i)),
         "up": Button(content_frame, text="up", command=lambda index=i: up_clicked(index)),
         "down": Button(content_frame, text="down", command=lambda index=i: down_clicked(index))
